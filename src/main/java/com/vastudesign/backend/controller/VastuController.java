@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/vastu")
-@CrossOrigin(origins = "http://localhost:4200")
 public class VastuController {
 
     private final FurnitureItemRepository furnitureItemRepository;
