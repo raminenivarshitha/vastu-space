@@ -655,7 +655,36 @@
         <div class="card">
 
             <h3>Room Details</h3>
+             <div style="margin-bottom:20px;">
+    <div style="
+        font-weight:700;
+        margin-bottom:10px;
+        color:#25483f;
+    ">
+        Quick Demo Presets
+    </div>
 
+    <div style="
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+    ">
+        <button type="button"
+                onclick="applyPreset('GOOD')">
+            Good Vastu
+        </button>
+
+        <button type="button"
+                onclick="applyPreset('AVERAGE')">
+            Average Vastu
+        </button>
+
+        <button type="button"
+                onclick="applyPreset('POOR')">
+            Needs Improvement
+        </button>
+    </div>
+</div>
             <form id="vastuForm">
 
                 <div class="form-grid">
@@ -1006,7 +1035,16 @@
             </div>
 
         </div>
+          <div class="issues-card">
+    <h3>Score Breakdown</h3>
 
+    <div id="scoreBreakdown">
+        <div>Entrance: <strong id="doorScore">0</strong></div>
+        <div>Window: <strong id="windowScore">0</strong></div>
+        <div>Sofa: <strong id="sofaScore">0</strong></div>
+        <div>TV: <strong id="tvScore">0</strong></div>
+    </div>
+</div>
 
         <div class="issues-card">
 
@@ -1015,7 +1053,10 @@
             </h3>
 
             <div id="issuesList"></div>
-
+             <div style="margin-top:20px;">
+    <h3>Smart Improvement Tips</h3>
+    <div id="smartTips"></div>
+</div>
         </div>
 
     </div>
@@ -1426,7 +1467,31 @@
 
 
     updatePreview();
+function applyPreset(type) {
 
+    if (type === "GOOD") {
+        doorWall.value = "EAST";
+        windowWall.value = "NORTH";
+        sofaZone.value = "SOUTH_WEST";
+        tvZone.value = "SOUTH_EAST";
+    }
+
+    if (type === "AVERAGE") {
+        doorWall.value = "NORTH";
+        windowWall.value = "WEST";
+        sofaZone.value = "SOUTH";
+        tvZone.value = "EAST";
+    }
+
+    if (type === "POOR") {
+        doorWall.value = "SOUTH";
+        windowWall.value = "SOUTH";
+        sofaZone.value = "NORTH_EAST";
+        tvZone.value = "NORTH_WEST";
+    }
+
+    updatePreview();
+}
 
     async function postJson(
         url,
@@ -1560,8 +1625,48 @@ if (tv === "SOUTH_EAST") {
 }
 
 score = Math.max(0, Math.min(100, score));
+document.getElementById("doorScore").textContent =
+    (door === "NORTH" || door === "EAST") ? "+5" : "-8";
 
+document.getElementById("windowScore").textContent =
+    (windowDir === "NORTH" || windowDir === "EAST") ? "+5" : "-5";
+
+document.getElementById("sofaScore").textContent =
+    (sofa === "SOUTH_WEST") ? "+5" : "-5";
+
+document.getElementById("tvScore").textContent =
+    (tv === "SOUTH_EAST")
+        ? "+5"
+        : (tv === "NONE" ? "0" : "-5");
 const report = {
+const smartTips =
+    document.getElementById("smartTips");
+
+const tipsToShow =
+    recommendations.length > 0
+        ? recommendations
+        : [
+            "Keep the center of the room open and clutter-free.",
+            "Use soft natural lighting.",
+            "Maintain balanced furniture placement."
+        ];
+
+smartTips.innerHTML =
+    tipsToShow
+        .map(
+            (tip, index) =>
+                `<div style="
+                    padding:12px 14px;
+                    margin-bottom:10px;
+                    background:#f7f9f7;
+                    border-radius:10px;
+                    border-left:4px solid #25483f;
+                ">
+                    <strong>Priority ${index + 1}:</strong>
+                    ${tip}
+                </div>`
+        )
+        .join("");
     score: score,
     vastuScore: score,
     overallScore: score,
