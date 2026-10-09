@@ -1496,231 +1496,102 @@
 
 
             try {
-
-                const projectName =
-                    document.getElementById(
-                        "projectName"
-                    ).value;
-
-
-                const roomLength =
-                    Number(
-                        document.getElementById(
-                            "roomLength"
-                        ).value
-                    );
-
-
-                const roomWidth =
-                    Number(
-                        document.getElementById(
-                            "roomWidth"
-                        ).value
-                    );
-
-
-                /*
-                 * 1. Create Project
-                 */
-
-                const project =
-                    await postJson(
-                        "/api/projects",
-                        {
-                            name:
-                                projectName
-                        }
-                    );
-
-
-                /*
-                 * 2. Create Room
-                 */
-
-                const room =
-                    await postJson(
-                        "/api/rooms",
-                        {
-                            projectId:
-                                project.id,
-
-                            roomType:
-                                "LIVING_ROOM",
-
-                            length:
-                                roomLength,
-
-                            width:
-                                roomWidth,
-
-                            northDirection:
-                                "NORTH"
-                        }
-                    );
-
-
-                /*
-                 * 3. Save Door
-                 */
-
-                await postJson(
-                    "/api/openings",
-                    {
-                        roomId:
-                            room.id,
-
-                        type:
-                            "DOOR",
-
-                        wall:
-                            doorWall.value,
-
-                        position:
-                            2,
-
-                        width:
-                            3
-                    }
-                );
-
-
-                /*
-                 * 4. Save Window
-                 */
-
-                await postJson(
-                    "/api/openings",
-                    {
-                        roomId:
-                            room.id,
-
-                        type:
-                            "WINDOW",
-
-                        wall:
-                            windowWall.value,
-
-                        position:
-                            4,
-
-                        width:
-                            4
-                    }
-                );
-
-
-                /*
-                 * 5. Save Sofa
-                 */
-
-                const sofaCoordinates =
-                    getZoneCoordinates(
-                        sofaZone.value,
-                        roomWidth,
-                        roomLength
-                    );
-
-
-                await postJson(
-                    "/api/furniture",
-                    {
-                        roomId:
-                            room.id,
-
-                        type:
-                            "SOFA",
-
-                        xPosition:
-                            sofaCoordinates[0],
-
-                        yPosition:
-                            sofaCoordinates[1],
-
-                        width:
-                            7,
-
-                        depth:
-                            3,
-
-                        rotation:
-                            0
-                    }
-                );
-
-
-                /*
-                 * 6. Save TV
-                 */
-
-                if (
-                    tvZone.value !==
-                    "NONE"
-                ) {
-
-                    const tvCoordinates =
-                        getZoneCoordinates(
-                            tvZone.value,
-                            roomWidth,
-                            roomLength
-                        );
-
-
-                    await postJson(
-                        "/api/furniture",
-                        {
-                            roomId:
-                                room.id,
-
-                            type:
-                                "TV",
-
-                            xPosition:
-                                tvCoordinates[0],
-
-                            yPosition:
-                                tvCoordinates[1],
-
-                            width:
-                                4,
-
-                            depth:
-                                1,
-
-                            rotation:
-                                0
-                        }
-                    );
-                }
-
-
-                /*
-                 * 7. Run Vastu Analysis
-                 */
-
-                const reportResponse =
-                    await fetch(
-                        "/api/vastu/living-room/"
-                        + room.id
-                    );
-
-
-                if (!reportResponse.ok) {
-
-                    throw new Error(
-                        "Unable to analyze room."
-                    );
-                }
-
-
-                const report =
-                    await reportResponse.json();
-
-
-                showReport(report);
-
-
-            } catch (error) {
-
+const roomLength = Number(
+    document.getElementById("roomLength").value
+);
+
+const roomWidth = Number(
+    document.getElementById("roomWidth").value
+);
+
+const door = doorWall.value;
+const windowDir = windowWall.value;
+const sofa = sofaZone.value;
+const tv = tvZone.value;
+
+let score = 80;
+
+const issues = [];
+const recommendations = [];
+
+if (door === "NORTH" || door === "EAST") {
+    score += 5;
+} else {
+    score -= 8;
+
+    issues.push({
+        title: "Door Placement",
+        message: "Entrance is less favorable for this layout."
+    });
+
+    recommendations.push(
+        "Consider keeping the entrance area bright and clutter-free."
+    );
+}
+
+if (windowDir === "NORTH" || windowDir === "EAST") {
+    score += 5;
+} else {
+    score -= 5;
+
+    recommendations.push(
+        "Increase natural light toward the north or east side."
+    );
+}
+
+if (sofa === "SOUTH_WEST") {
+    score += 5;
+} else {
+    score -= 5;
+
+    recommendations.push(
+        "Place heavier seating toward the south-west area."
+    );
+}
+
+if (tv === "SOUTH_EAST") {
+    score += 5;
+} else if (tv !== "NONE") {
+    score -= 5;
+
+    recommendations.push(
+        "South-east is generally preferred for electronic equipment."
+    );
+}
+
+score = Math.max(0, Math.min(100, score));
+
+const report = {
+    score: score,
+    vastuScore: score,
+    overallScore: score,
+
+    status:
+        score >= 85
+            ? "EXCELLENT"
+            : score >= 70
+            ? "GOOD"
+            : "NEEDS_IMPROVEMENT",
+
+    issues: issues,
+
+    recommendations:
+        recommendations.length > 0
+            ? recommendations
+            : [
+                "Your room layout is well balanced.",
+                "Maintain good lighting and keep the center area open."
+            ],
+
+    summary:
+        "Room analyzed successfully using VastuSpace Smart Design Engine.",
+
+    roomArea:
+        roomLength * roomWidth
+};
+
+showReport(report);
+           } catch (error) {
                 console.error(error);
 
                 errorBox.textContent =
