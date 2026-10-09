@@ -578,16 +578,199 @@
 </head>
 
 <body>
+<div
+    id="authScreen"
+    style="
+        min-height:100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:30px;
+        background:#f7f6f2;
+    "
+>
+    <div
+        style="
+            width:100%;
+            max-width:430px;
+            background:white;
+            border:1px solid #e2e6e3;
+            border-radius:20px;
+            padding:30px;
+        "
+    >
+        <h2 style="
+            color:#24483f;
+            margin-bottom:8px;
+        ">
+            Welcome to VastuSpace
+        </h2>
 
+        <p style="
+            color:#66716d;
+            margin-bottom:24px;
+        ">
+            Create an account or sign in to continue.
+        </p>
+
+        <div id="signupSection">
+            <div class="form-group" style="margin-bottom:14px;">
+                <label>Name</label>
+                <input
+                    id="signupName"
+                    type="text"
+                    placeholder="Enter your name"
+                >
+            </div>
+
+            <div class="form-group" style="margin-bottom:14px;">
+                <label>Email</label>
+                <input
+                    id="signupEmail"
+                    type="email"
+                    placeholder="Enter your email"
+                >
+            </div>
+
+            <div class="form-group" style="margin-bottom:18px;">
+                <label>Password</label>
+                <input
+                    id="signupPassword"
+                    type="password"
+                    placeholder="Create password"
+                >
+            </div>
+
+            <button
+                type="button"
+                class="analyze-btn"
+                onclick="signupUser()"
+            >
+                Sign Up
+            </button>
+
+            <button
+                type="button"
+                onclick="showSigninForm()"
+                style="
+                    width:100%;
+                    margin-top:12px;
+                    border:none;
+                    background:none;
+                    color:#24483f;
+                    cursor:pointer;
+                    font-weight:700;
+                "
+            >
+                Already have an account? Sign In
+            </button>
+        </div>
+
+        <div
+            id="signinSection"
+            style="display:none;"
+        >
+            <div class="form-group" style="margin-bottom:14px;">
+                <label>Email</label>
+                <input
+                    id="signinEmail"
+                    type="email"
+                    placeholder="Enter your email"
+                >
+            </div>
+
+            <div class="form-group" style="margin-bottom:18px;">
+                <label>Password</label>
+                <input
+                    id="signinPassword"
+                    type="password"
+                    placeholder="Enter password"
+                >
+            </div>
+
+            <button
+                type="button"
+                class="analyze-btn"
+                onclick="signinUser()"
+            >
+                Sign In
+            </button>
+
+            <button
+                type="button"
+                onclick="showSignupForm()"
+                style="
+                    width:100%;
+                    margin-top:12px;
+                    border:none;
+                    background:none;
+                    color:#24483f;
+                    cursor:pointer;
+                    font-weight:700;
+                "
+            >
+                New user? Create Account
+            </button>
+        </div>
+    </div>
+</div>
+<div id="appContent" style="display:none;">
 <nav class="navbar">
     <div class="logo">
         Vastu<span>Space</span>
     </div>
+<div style="display:flex; align-items:center; gap:12px;">
 
     <div class="nav-badge">
         Vastu + Interior Design
     </div>
-</nav>
+
+    <button
+        type="button"
+        id="loginButton"
+        onclick="openLoginModal()"
+        style="
+            border:none;
+            background:#24483f;
+            color:white;
+            padding:9px 16px;
+            border-radius:20px;
+            cursor:pointer;
+            font-weight:700;
+        "
+    >
+        Sign In
+    </button>
+
+    <div
+        id="userProfile"
+        style="
+            display:none;
+            align-items:center;
+            gap:8px;
+            font-weight:700;
+            color:#24483f;
+        "
+    >
+        👤 <span id="profileName"></span>
+
+        <button
+            type="button"
+            onclick="logoutUser()"
+            style="
+                border:none;
+                background:#f1e7da;
+                color:#7a5524;
+                padding:7px 12px;
+                border-radius:16px;
+                cursor:pointer;
+            "
+        >
+            Logout
+        </button>
+    </div>
+
+</div></nav>
 
 
 <section class="hero">
@@ -1371,6 +1554,85 @@
     VastuSpace • Smart Vastu Interior Planning
 </footer>
 
+<div
+    id="loginModal"
+    style="
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.45);
+        align-items:center;
+        justify-content:center;
+        z-index:9999;
+        padding:20px;
+    "
+>
+    <div
+        style="
+            width:100%;
+            max-width:420px;
+            background:white;
+            border-radius:18px;
+            padding:28px;
+            position:relative;
+        "
+    >
+        <button
+            type="button"
+            onclick="closeLoginModal()"
+            style="
+                position:absolute;
+                right:16px;
+                top:14px;
+                border:none;
+                background:none;
+                font-size:22px;
+                cursor:pointer;
+            "
+        >
+            ×
+        </button>
+
+        <h2 style="margin-bottom:20px; color:#24483f;">
+            Sign In
+        </h2>
+
+        <div class="form-group" style="margin-bottom:14px;">
+            <label>Name</label>
+            <input
+                id="loginName"
+                type="text"
+                placeholder="Enter your name"
+            >
+        </div>
+
+        <div class="form-group" style="margin-bottom:14px;">
+            <label>Email</label>
+            <input
+                id="loginEmail"
+                type="email"
+                placeholder="Enter your email"
+            >
+        </div>
+
+        <div class="form-group" style="margin-bottom:18px;">
+            <label>Password</label>
+            <input
+                id="loginPassword"
+                type="password"
+                placeholder="Enter password"
+            >
+        </div>
+
+        <button
+            type="button"
+            class="analyze-btn"
+            onclick="loginUser()"
+        >
+            Sign In
+        </button>
+    </div>
+</div>
 
 <script>
 
@@ -2352,7 +2614,169 @@ if (resetButton) {
         }
     );
 }
-</script>
+function openLoginModal() {
+    document.getElementById("loginModal").style.display = "flex";
+}
 
+function closeLoginModal() {
+    document.getElementById("loginModal").style.display = "none";
+}
+
+function loginUser() {
+    const name =
+        document.getElementById("loginName").value.trim();
+
+    const email =
+        document.getElementById("loginEmail").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value.trim();
+
+    if (!name || !email || !password) {
+        alert("Please enter name, email and password.");
+        return;
+    }
+
+    localStorage.setItem(
+        "vastuUser",
+        JSON.stringify({
+            name: name,
+            email: email
+        })
+    );
+
+    showLoggedInUser(name);
+
+    closeLoginModal();
+}
+function logoutUser() {
+    localStorage.removeItem("vastuUser");
+
+    document.getElementById("appContent").style.display = "none";
+    document.getElementById("authScreen").style.display = "flex";
+
+    document.getElementById("loginButton").style.display = "inline-block";
+    document.getElementById("userProfile").style.display = "none";
+
+    showSigninForm();
+}
+function showLoggedInUser(name) {
+    document.getElementById("profileName").textContent = name;
+
+    document.getElementById("loginButton").style.display = "none";
+    document.getElementById("userProfile").style.display = "flex";
+}
+
+const savedUser =
+    localStorage.getItem("vastuUser");
+
+if (savedUser) {
+    const user = JSON.parse(savedUser);
+    showLoggedInUser(user.name);
+}
+function showAppForUser(user) {
+    document.getElementById("authScreen").style.display = "none";
+    document.getElementById("appContent").style.display = "block";
+
+    document.getElementById("profileName").textContent = user.name;
+    document.getElementById("loginButton").style.display = "none";
+    document.getElementById("userProfile").style.display = "flex";
+}
+
+function showSigninForm() {
+    document.getElementById("signupSection").style.display = "none";
+    document.getElementById("signinSection").style.display = "block";
+}
+
+function showSignupForm() {
+    document.getElementById("signinSection").style.display = "none";
+    document.getElementById("signupSection").style.display = "block";
+}
+
+function signupUser() {
+    const name =
+        document.getElementById("signupName").value.trim();
+
+    const email =
+        document.getElementById("signupEmail").value.trim();
+
+    const password =
+        document.getElementById("signupPassword").value.trim();
+
+    if (!name || !email || !password) {
+        alert("Please enter name, email and password.");
+        return;
+    }
+
+    const user = {
+        name: name,
+        email: email,
+        password: password
+    };
+
+    localStorage.setItem(
+        "vastuRegisteredUser",
+        JSON.stringify(user)
+    );
+
+    localStorage.setItem(
+        "vastuUser",
+        JSON.stringify({
+            name: name,
+            email: email
+        })
+    );
+
+    showAppForUser(user);
+}
+
+function signinUser() {
+    const email =
+        document.getElementById("signinEmail").value.trim();
+
+    const password =
+        document.getElementById("signinPassword").value.trim();
+
+    const storedUser =
+        localStorage.getItem("vastuRegisteredUser");
+
+    if (!storedUser) {
+        alert("No account found. Please sign up first.");
+        return;
+    }
+
+    const user = JSON.parse(storedUser);
+
+    if (
+        email !== user.email ||
+        password !== user.password
+    ) {
+        alert("Invalid email or password.");
+        return;
+    }
+
+    localStorage.setItem(
+        "vastuUser",
+        JSON.stringify({
+            name: user.name,
+            email: user.email
+        })
+    );
+
+    showAppForUser(user);
+}
+
+const loggedInUser =
+    localStorage.getItem("vastuUser");
+
+if (loggedInUser) {
+    const user = JSON.parse(loggedInUser);
+    showAppForUser(user);
+} else {
+    document.getElementById("authScreen").style.display = "flex";
+    document.getElementById("appContent").style.display = "none";
+}
+</script>
+</div>
 </body>
 </html>
