@@ -1176,6 +1176,19 @@
         "
     >
         Print / Save Vastu Report
+<button
+    type="button"
+    id="resetRoomButton"
+    class="analyze-btn"
+    style="
+        width:auto;
+        padding-left:28px;
+        padding-right:28px;
+        margin-left:10px;
+    "
+>
+    Analyze Another Room
+</button>
     </button>
 </div>
 
@@ -2023,6 +2036,62 @@ if (printButton) {
 
             window.print();
 
+        }
+    );
+}
+const resetButton =
+    document.getElementById("resetRoomButton");
+
+if (resetButton) {
+
+    resetButton.addEventListener(
+        "click",
+        function () {
+
+            document.getElementById("vastuForm").reset();
+
+            document.getElementById(
+                "resultSection"
+            ).style.display = "none";
+
+            document.getElementById(
+                "aiRecommendationSection"
+            ).style.display = "none";
+
+            document.getElementById(
+                "smartTips"
+            ).innerHTML = "";
+
+            document.getElementById(
+                "scoreNumber"
+            ).textContent = "0";
+
+            document.getElementById(
+                "rating"
+            ).textContent = "-";
+
+            document.getElementById(
+                "doorScore"
+            ).textContent = "0";
+
+            document.getElementById(
+                "windowScore"
+            ).textContent = "0";
+
+            document.getElementById(
+                "sofaScore"
+            ).textContent = "0";
+
+            document.getElementById(
+                "tvScore"
+            ).textContent = "0";
+
+            updatePreview();
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
         }
     );
 }
