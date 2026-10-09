@@ -704,14 +704,78 @@
                     <div class="form-group">
                         <label>Room Type</label>
 
-                        <select id="roomType">
-                            <option value="LIVING_ROOM">
-                                Living Room
-                            </option>
-                        </select>
+                       <select id="roomType" required>
+    <option value="LIVING_ROOM">Living Room</option>
+    <option value="BEDROOM">Bedroom</option>
+    <option value="KITCHEN">Kitchen</option>
+    <option value="DINING_ROOM">Dining Room</option>
+    <option value="STUDY">Study / Home Office</option>
+    <option value="POOJA_ROOM">Pooja Room</option>
+</select>
                     </div>
 
+<div class="form-group full">
+    <label>Furniture to Include</label>
 
+    <div style="
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+        gap:10px;
+        margin-top:8px;
+    ">
+        <label>
+            <input type="checkbox" class="furnitureOption" value="SOFA">
+            Sofa
+        </label>
+
+        <label>
+            <input type="checkbox" class="furnitureOption" value="TV">
+            TV
+        </label>
+
+        <label>
+            <input type="checkbox" class="furnitureOption" value="BED">
+            Bed
+        </label>
+
+        <label>
+            <input type="checkbox" class="furnitureOption" value="DINING_TABLE">
+            Dining Table
+        </label>
+
+        <label>
+            <input type="checkbox" class="furnitureOption" value="WORK_DESK">
+            Work Desk
+        </label>
+
+        <label>
+            <input type="checkbox" class="furnitureOption" value="WARDROBE">
+            Wardrobe
+        </label>
+
+        <label>
+            <input type="checkbox" class="furnitureOption" value="POOJA_UNIT">
+            Pooja Unit
+        </label>
+    </div>
+</div>
+<div
+    id="furniturePlacementSection"
+    class="form-group full"
+    style="display:none;"
+>
+    <label>Furniture Placement</label>
+
+    <div
+        id="furniturePlacementControls"
+        style="
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+            gap:12px;
+            margin-top:10px;
+        "
+    ></div>
+</div>
                     <div class="form-group">
                         <label>Interior Style</label>
 
@@ -1004,6 +1068,14 @@
         <span>Analysis</span>
 
         <h2>Your Vastu Report</h2>
+<div
+    id="roomTypeSummary"
+    style="
+        margin-top:8px;
+        font-weight:600;
+        color:#66716d;
+    "
+></div>
 
     </div>
 
@@ -1480,6 +1552,79 @@
 
 
     updatePreview();
+function updateFurniturePlacementControls() {
+
+    const selectedFurniture =
+        Array.from(
+            document.querySelectorAll(
+                ".furnitureOption:checked"
+            )
+        ).map(item => item.value);
+
+    const section =
+        document.getElementById(
+            "furniturePlacementSection"
+        );
+
+    const controls =
+        document.getElementById(
+            "furniturePlacementControls"
+        );
+
+    controls.innerHTML = "";
+
+    if (selectedFurniture.length === 0) {
+        section.style.display = "none";
+        return;
+    }
+
+    section.style.display = "block";
+
+    selectedFurniture.forEach(item => {
+
+        const wrapper =
+            document.createElement("div");
+
+        const niceName =
+            item.replaceAll("_", " ");
+
+        wrapper.innerHTML = `
+            <label style="
+                display:block;
+                margin-bottom:6px;
+                font-weight:600;
+            ">
+                ${niceName}
+            </label>
+
+            <select
+                class="furniturePlacement"
+                data-furniture="${item}"
+            >
+                <option value="NORTH">North</option>
+                <option value="NORTH_EAST">North-East</option>
+                <option value="EAST">East</option>
+                <option value="SOUTH_EAST">South-East</option>
+                <option value="SOUTH">South</option>
+                <option value="SOUTH_WEST">South-West</option>
+                <option value="WEST">West</option>
+                <option value="NORTH_WEST">North-West</option>
+                <option value="CENTER">Center</option>
+            </select>
+        `;
+
+        controls.appendChild(wrapper);
+    });
+}
+
+document
+    .querySelectorAll(".furnitureOption")
+    .forEach(item => {
+        item.addEventListener(
+            "change",
+            updateFurniturePlacementControls
+        );
+    });
 function applyPreset(type) {
 
     if (type === "GOOD") {
@@ -1586,8 +1731,26 @@ const door = doorWall.value;
 const windowDir = windowWall.value;
 const sofa = sofaZone.value;
 const tv = tvZone.value;
+const roomType =
+    document.getElementById("roomType").value;
 
-let score = 80;
+const selectedFurniture =
+    Array.from(
+        document.querySelectorAll(
+            ".furnitureOption:checked"
+        )
+    ).map(item => item.value);
+
+const furniturePlacements = {};
+
+document
+    .querySelectorAll(".furniturePlacement")
+    .forEach(select => {
+        furniturePlacements[
+            select.dataset.furniture
+        ] = select.value;
+    });
+let score = 65;
 
 const issues = [];
 const recommendations = [];
@@ -1636,7 +1799,77 @@ if (tv === "SOUTH_EAST") {
         "South-east is generally preferred for electronic equipment."
     );
 }
+if (roomType === "BEDROOM") {
+    if (selectedFurniture.includes("BED")) {
+        if (furniturePlacements.BED === "SOUTH_WEST") {
+            score += 5;
+        } else {
+            score -= 5;
+            recommendations.push(
+                "For bedrooms, place the bed toward the south-west when possible."
+            );
+        }
+    }
+}
 
+if (roomType === "KITCHEN") {
+    recommendations.push(
+        "For kitchens, south-east is generally preferred for the cooking zone."
+    );
+}
+
+if (roomType === "DINING_ROOM") {
+    if (selectedFurniture.includes("DINING_TABLE")) {
+        if (
+            furniturePlacements.DINING_TABLE === "WEST" ||
+            furniturePlacements.DINING_TABLE === "NORTH_WEST"
+        ) {
+            score += 3;
+        } else {
+            recommendations.push(
+                "For dining rooms, west or north-west can be a good placement for the dining table."
+            );
+        }
+    }
+}
+
+if (roomType === "STUDY") {
+    if (selectedFurniture.includes("WORK_DESK")) {
+        if (
+            furniturePlacements.WORK_DESK === "NORTH" ||
+            furniturePlacements.WORK_DESK === "EAST"
+        ) {
+            score += 5;
+        } else {
+            score -= 3;
+            recommendations.push(
+                "For a study room, place the work desk toward the north or east."
+            );
+        }
+    }
+}
+
+if (roomType === "POOJA_ROOM") {
+    if (selectedFurniture.includes("POOJA_UNIT")) {
+        if (furniturePlacements.POOJA_UNIT === "NORTH_EAST") {
+            score += 5;
+        } else {
+            score -= 5;
+            recommendations.push(
+                "North-east is preferred for the pooja unit."
+            );
+        }
+    }
+}
+
+if (selectedFurniture.includes("WARDROBE")) {
+    if (
+        furniturePlacements.WARDROBE === "SOUTH_WEST" ||
+        furniturePlacements.WARDROBE === "WEST"
+    ) {
+        score += 3;
+    }
+}
 score = Math.max(0, Math.min(100, score));
 document.getElementById("doorScore").textContent =
     (door === "NORTH" || door === "EAST") ? "+5" : "-8";
@@ -1731,6 +1964,30 @@ if (report.issues.length === 0) {
             "Maintain the current arrangement and keep the center open."
     });
 }
+const roomTypeNames = {
+    LIVING_ROOM: "Living Room",
+    BEDROOM: "Bedroom",
+    KITCHEN: "Kitchen",
+    DINING_ROOM: "Dining Room",
+    STUDY: "Study / Home Office",
+    POOJA_ROOM: "Pooja Room"
+};
+
+document.getElementById(
+    "roomTypeSummary"
+).textContent =
+    "Room Type: " +
+    roomTypeNames[roomType] +
+    " • Selected Furniture: " +
+    (
+        selectedFurniture.length > 0
+            ? selectedFurniture
+                .map(item =>
+                    item.replaceAll("_", " ")
+                )
+                .join(", ")
+            : "None"
+    );
 showReport(report);
            } catch (error) {
                 console.error(error);
