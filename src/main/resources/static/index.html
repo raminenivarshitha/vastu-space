@@ -1589,7 +1589,27 @@ const report = {
     roomArea:
         roomLength * roomWidth
 };
+report.rating = report.status;
 
+report.issues = report.issues.map(issue => ({
+    item: issue.item || issue.title || "Vastu Check",
+    severity: issue.severity || "MEDIUM",
+    message: issue.message || "",
+    recommendation:
+        issue.recommendation ||
+        recommendations[0] ||
+        "Maintain balanced placement and good lighting."
+}));
+
+if (report.issues.length === 0) {
+    report.issues.push({
+        item: "Overall Layout",
+        severity: "LOW",
+        message: "The room layout is generally well balanced.",
+        recommendation:
+            "Maintain the current arrangement and keep the center open."
+    });
+}
 showReport(report);
            } catch (error) {
                 console.error(error);
